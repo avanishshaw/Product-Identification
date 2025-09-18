@@ -2,6 +2,7 @@
 
 import Product from '../models/productModel.js';
 
+// Create a new Product
 export const createProduct = async (req, res) => {
     try {
         const {name, productId, description } = req.body;
@@ -18,6 +19,7 @@ export const createProduct = async (req, res) => {
     }
 };
 
+// Verify/get a new product by it's id
 export const verifyProduct = async (req, res) => {
     try {
         const product = await Product.findOne({productId: req.param.productId });
