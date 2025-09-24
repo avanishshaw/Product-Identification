@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import sellerRoutes from './routes/sellerRoutes.js';
 
 // Load Environment variables
 dotenv.config();
@@ -20,7 +21,8 @@ mongoose.connect(process.env.MONGO_URI)
     .catch((error) => console.error('Error connecting to MongoDB Atlas:', error));
 
 // Routes
-// app.use('/api/products', productRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/sellers', sellerRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
