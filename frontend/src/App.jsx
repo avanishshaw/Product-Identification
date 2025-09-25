@@ -1,30 +1,53 @@
-// frontend/src/App.jsx
+// frontend/src/App.jsx (Updated)
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-// Import Components
 import Header from './components/Header';
 
-// Import Pages
+// General Pages
 import HomePage from './pages/HomePage';
-import AddProductPage from './pages/AddProductPage';
-import SellerPage from './pages/SellerPage';
-import ScanPage from './pages/ScanPage'; // This is our Consumer page
 import ResultPage from './pages/ResultPage';
+
+// Manufacturer Pages
+import ManufacturerPage from './pages/Manufacturer/ManufacturerPage';
+import AddProductPage from './pages/Manufacturer/AddProductPage';
+import AddSellerPage from './pages/Manufacturer/AddSellerPage';
+import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
+
+// Seller Pages
+import SellerPage from './pages/Seller/SellerPage';
+import QueryProductsPage from './pages/Seller/QueryProductsPage';
+
+// Consumer Pages
+import ConsumerPage from './pages/Consumer/ConsumerPage';
+import ScanPage from './pages/Consumer/ScanPage'; // The actual scanner
+import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
 
 function App() {
   return (
     <Router>
       <div className="bg-gray-900 min-h-screen text-white font-sans">
         <Header />
-        <main className="container mx-auto p-4 mt-8">
+        <main className="container mx-auto p-4 mt-6">
           <Routes>
+            {/* General */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/manufacturer" element={<AddProductPage />} />
-            <Route path="/seller" element={<SellerPage />} />
-            <Route path="/consumer" element={<ScanPage />} />
             <Route path="/verify/:productId" element={<ResultPage />} />
+            
+            {/* Manufacturer */}
+            <Route path="/manufacturer" element={<ManufacturerPage />} />
+            <Route path="/manufacturer/add-product" element={<AddProductPage />} />
+            <Route path="/manufacturer/add-seller" element={<AddSellerPage />} />
+            <Route path="/manufacturer/query-seller" element={<QuerySellerPage />} />
+
+            {/* Seller */}
+            <Route path="/seller" element={<SellerPage />} />
+            <Route path="/seller/query-products" element={<QueryProductsPage />} />
+
+            {/* Consumer */}
+            <Route path="/consumer" element={<ConsumerPage />} />
+            <Route path="/consumer/scan" element={<ScanPage />} />
+            <Route path="/consumer/history" element={<PurchaseHistoryPage />} />
           </Routes>
         </main>
       </div>
