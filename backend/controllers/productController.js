@@ -33,3 +33,29 @@ export const verifyProduct = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message })
     }
 };
+
+// @desc    Get all products for sale by a specific seller
+export const getProductsBySeller = async (req, res) => {
+  try {
+    const products = await Product.find({ 
+      currentOwner: req.params.sellerCode, 
+      status: 'With Seller' 
+    });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Get purchase history for a specific consumer
+export const getProductsByConsumer = async (req, res) => {
+  try {
+    const products = await Product.find({ 
+      currentOwner: req.params.consumerCode, 
+      status: 'Sold' 
+    });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
