@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import sellerRoutes from './routes/sellerRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 // Load Environment variables
 dotenv.config();
