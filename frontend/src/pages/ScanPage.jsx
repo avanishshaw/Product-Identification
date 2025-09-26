@@ -1,18 +1,21 @@
 // src/pages/ScanPage.jsx
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QrReader } from 'react-qr-reader';
+import beep from '../assets/beep.wav';
 
 const ScanPage = () => {
   const navigate = useNavigate();
+  const audioRef = useRef(null);
 
   const handleScanResult = (result, error) => {
     if (!!result) {
       // Assuming the QR code directly contains the product ID
       const productId = result?.text;
       if (productId) {
-        navigate(`/verify/${productId}`);
+        audioRef.current.play(); // Play the beep sound
+        setTimeout(() => navigate(`/verify/${productId}`), 300); // Navigate after a short delay
       }
     }
 
@@ -32,6 +35,7 @@ const ScanPage = () => {
         />
       </div>
       <p className="mt-6 text-lg text-gray-300">Point the camera at a QR code to verify the product.</p>
+      <audio ref={audioRef} src={beepSound} preload="auto"></audio>
     </div>
   );
 };
