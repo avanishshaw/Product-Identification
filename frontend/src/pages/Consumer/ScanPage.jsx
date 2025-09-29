@@ -1,9 +1,8 @@
 // src/pages/ScanPage.jsx
-
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QrReader } from 'react-qr-reader';
-import beep from '../assets/beep.wav';
+import beep from "../../assets/beep.wav";
 
 const ScanPage = () => {
   const navigate = useNavigate();
@@ -11,11 +10,10 @@ const ScanPage = () => {
 
   const handleScanResult = (result, error) => {
     if (!!result) {
-      // Assuming the QR code directly contains the product ID
       const productId = result?.text;
       if (productId) {
-        audioRef.current.play(); // Play the beep sound
-        setTimeout(() => navigate(`/verify/${productId}`), 300); // Navigate after a short delay
+        audioRef.current.play();
+        setTimeout(() => navigate(`/verify/${productId}`), 300);
       }
     }
 
@@ -26,7 +24,9 @@ const ScanPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-[80vh]">
-      <h1 className="text-4xl md:text-5xl font-bold mb-8 text-cyan-400">Scan Product QR Code</h1>
+      <h1 className="text-4xl md:text-5xl font-bold mb-8 text-cyan-400">
+        Scan Product QR Code
+      </h1>
       <div className="w-full max-w-sm md:max-w-md border-4 border-cyan-500 rounded-lg overflow-hidden shadow-lg">
         <QrReader
           onResult={handleScanResult}
@@ -34,8 +34,10 @@ const ScanPage = () => {
           containerStyle={{ width: '100%' }}
         />
       </div>
-      <p className="mt-6 text-lg text-gray-300">Point the camera at a QR code to verify the product.</p>
-      <audio ref={audioRef} src={beepSound} preload="auto"></audio>
+      <p className="mt-6 text-lg text-gray-300">
+        Point the camera at a QR code to verify the product.
+      </p>
+      <audio ref={audioRef} src={beep} preload="auto"></audio>
     </div>
   );
 };
