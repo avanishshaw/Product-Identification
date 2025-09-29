@@ -26,6 +26,7 @@ import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
 // import ConsumerPage from './pages/Consumer/ConsumerPage';
 import ScanPage from './pages/Consumer/ScanPage'; // The actual scanner
 import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
+import ConsumerPage from "./pages/Consumer/ConsumerPage";
 
 function App() {
   return (
