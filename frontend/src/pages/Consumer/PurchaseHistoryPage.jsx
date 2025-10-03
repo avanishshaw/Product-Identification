@@ -1,76 +1,37 @@
-// frontend/src/pages/Consumer/PurchaseHistoryPage.jsx
-
 import React, { useState } from 'react';
-import axios from 'axios';
+
+const dummyPurchaseHistory = [
+    { _id: '1', productSN: 'PROD003', sellerCode: 'EHUB1', manufacturerCode: 'MANU-A' },
+    { _id: '2', productSN: 'PROD004', sellerCode: 'DDREAMS', manufacturerCode: 'MANU-B' },
+];
 
 const PurchaseHistoryPage = () => {
   const [consumerCode, setConsumerCode] = useState('');
-  const [products, setProducts] = useState([]);
-  const [searched, setSearched] = useState(false);
+  const [history, setHistory] = useState([]);
 
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    try {
-      // We'll use the new endpoint to fetch products by consumer code
-      const { data } = await axios.get(`http://localhost:5001/api/products/consumer/${consumerCode}`);
-      setProducts(data);
-    } catch (error) {
-      console.error('Failed to fetch purchase history:', error);
-      setProducts([]);
-    } finally {
-      setSearched(true);
-    }
+    setHistory(dummyPurchaseHistory);
   };
-
+  
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6">Consumer Product History</h2>
-      <form onSubmit={handleSearch} className="flex gap-4 mb-8">
-        <input 
-          type="text"
-          value={consumerCode}
-          onChange={(e) => setConsumerCode(e.target.value)}
-          placeholder="Enter Consumer Code" 
-          className="input-style flex-grow" 
-          required
-        />
-        <button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-lg">
-          Get Products
-        </button>
+    <div className="card">
+      <h2 className="text-2xl font-bold text-white mb-6">Consumer Purchase History</h2>
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-8">
+        <input value={consumerCode} onChange={(e) => setConsumerCode(e.target.value)} placeholder="Enter Your Consumer Code" className="input-style flex-grow" />
+        <button type="submit" className="btn-primary">Get History</button>
       </form>
-
-      {searched && (
-        <div>
-          <h3 className="text-2xl font-bold mb-4">Products Purchased</h3>
-          {products.length > 0 ? (
-            <div className="overflow-x-auto bg-gray-800 rounded-lg">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-gray-700">
-                  <tr>
-                    <th className="p-3">Product SN</th>
-                    <th className="p-3">Product Name</th>
-                    <th className="p-3">Brand</th>
-                    <th className="p-3">Manufacturer ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id} className="border-b border-gray-700 hover:bg-gray-700">
-                      <td className="p-3">{product.productId}</td>
-                      <td className="p-3">{product.name}</td>
-                      <td className="p-3">{product.brand}</td>
-                      <td className="p-3">{product.manufacturerId}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="text-center p-4">No purchase history found for this consumer code.</p>
-          )}
-        </div>
-      )}
+      <div className="table-wrapper">
+        <table>
+          <thead><tr><th>Product SN</th><th>Seller Code</th><th>Manufacturer Code</th></tr></thead>
+          <tbody>
+            {history.map(p => (<tr key={p._id}><td>{p.productSN}</td><td>{p.sellerCode}</td><td>{p.manufacturerCode}</td></tr>))}
+          </tbody>
+        </table>
+        {history.length === 0 && <p className="p-4 text-center text-slate-400">No history to display. Enter a code and search.</p>}
+      </div>
     </div>
   );
 };
+
 export default PurchaseHistoryPage;

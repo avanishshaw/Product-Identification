@@ -1,67 +1,74 @@
-// frontend/src/App.jsx (Updated)
-
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
-// General Pages
+// Layouts
+import RootLayout from './layouts/RootLayout';
+import ManufacturerLayout from './layouts/ManufacturerLayout';
+import SellerLayout from './layouts/SellerLayout';
+import ConsumerLayout from './layouts/ConsumerLayout';
+
+// Pages
 import HomePage from './pages/HomePage';
-import ResultPage from './pages/ResultPage';
 
 // Manufacturer Pages
-import ManufacturerPage from './pages/Manufacturer/ManufacturerPage';
 import AddProductPage from './pages/Manufacturer/AddProductPage';
 import AddSellerPage from './pages/Manufacturer/AddSellerPage';
-import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
 import SellToSellerPage from './pages/Manufacturer/SellToSellerPage';
-
+import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
 
 // Seller Pages
-import SellerPage from './pages/SellerPage';
-import QueryProductsPage from './pages/Manufacturer/QueryProductsPage';
 import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
-
+import QueryProductsPage from './pages/Seller/QueryProductsPage';
 
 // Consumer Pages
-// import ConsumerPage from './pages/Consumer/ConsumerPage';
-import ScanPage from './pages/Consumer/ScanPage'; // The actual scanner
+import VerifyProductPage from './pages/Consumer/VerifyProductPage';
+import VerificationResultPage from './pages/Consumer/VerificationResultPage';
 import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
-import ConsumerPage from "./pages/Consumer/ConsumerPage";
+
+const Placeholder = () => <p className="text-center text-slate-400">Select an action from the menu above.</p>;
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      {
+        path: 'manufacturer',
+        element: <ManufacturerLayout />,
+        children: [
+          { index: true, element: <Placeholder /> },
+          { path: 'add-product', element: <AddProductPage /> },
+          { path: 'add-seller', element: <AddSellerPage /> },
+          { path: 'sell-product', element: <SellToSellerPage /> },
+          { path: 'query-seller', element: <QuerySellerPage /> },
+        ]
+      },
+      {
+        path: 'seller',
+        element: <SellerLayout />,
+        children: [
+            { index: true, element: <Placeholder /> },
+            { path: 'sell-product', element: <SellToConsumerPage /> },
+            { path: 'query-products', element: <QueryProductsPage /> },
+        ]
+      },
+      {
+        path: 'consumer',
+        element: <ConsumerLayout />,
+        children: [
+            { index: true, element: <Placeholder /> },
+            { path: 'verify', element: <VerifyProductPage /> },
+            { path: 'verify/:productId', element: <VerificationResultPage /> },
+            { path: 'history', element: <PurchaseHistoryPage /> },
+        ]
+      }
+    ],
+  },
+]);
 
 function App() {
-  return (
-    <Router>
-      <div className="bg-gray-900 min-h-screen text-white font-sans">
-        <Header />
-        <main className="container mx-auto p-4 mt-6">
-          <Routes>
-            {/* General */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/verify/:productId" element={<ResultPage />} />
-
-            {/* Manufacturer */}
-            <Route path="/manufacturer" element={<ManufacturerPage />} />
-            <Route path="/manufacturer/add-product" element={<AddProductPage />} />
-            <Route path="/manufacturer/add-seller" element={<AddSellerPage />} />
-            <Route path="/manufacturer/query-seller" element={<QuerySellerPage />} />
-            <Route path="/manufacturer/sell" element={<SellToSellerPage />} />
-
-
-            {/* Seller */}
-            <Route path="/seller" element={<SellerPage />} />
-            <Route path="/seller/query-products" element={<QueryProductsPage />} />
-            <Route path="/seller/sell" element={<SellToConsumerPage />} />
-
-
-            {/* Consumer */}
-            <Route path="/consumer" element={<ConsumerPage />} />
-            <Route path="/consumer/scan" element={<ScanPage />} />
-            <Route path="/consumer/history" element={<PurchaseHistoryPage />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

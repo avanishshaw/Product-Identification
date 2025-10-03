@@ -1,77 +1,46 @@
-// frontend/src/pages/Manufacturer/QuerySellerPage.jsx
-
 import React, { useState } from 'react';
-import axios from 'axios';
+
+// Dummy data for frontend-first development
+const dummySellers = [
+    { _id: '1', sellerId: 'S001', sellerName: 'ElectroHub', sellerBrand: 'Gadgetron', sellerCode: 'EHUB1', sellerNum: '1234567890', sellerManager: 'John Doe', sellerAddress: '123 Tech Lane' },
+    { _id: '2', sellerId: 'S002', sellerName: 'Digital Dreams', sellerBrand: 'NextGen', sellerCode: 'DDREAMS', sellerNum: '0987654321', sellerManager: 'Jane Smith', sellerAddress: '456 Circuit Ave' },
+];
 
 const QuerySellerPage = () => {
-  const [manufacturerId, setManufacturerId] = useState('');
+  const [manufacturerCode, setManufacturerCode] = useState('');
   const [sellers, setSellers] = useState([]);
-  const [searched, setSearched] = useState(false);
   
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.get(`http://localhost:5001/api/sellers/manufacturer/${manufacturerId}`);
-      setSellers(data);
-    } catch (error) {
-      console.error('Failed to fetch sellers:', error);
-      setSellers([]);
-    } finally {
-      setSearched(true);
-    }
+    // In a real app, this would be an API call. For now, we use dummy data.
+    setSellers(dummySellers);
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6">Query Sellers</h2>
-      <form onSubmit={handleSearch} className="flex gap-4 mb-8">
-        <input 
-          type="text" 
-          value={manufacturerId} 
-          onChange={(e) => setManufacturerId(e.target.value)}
-          placeholder="Enter Your Manufacturer ID" 
-          className="input-style flex-grow"
-          required 
-        />
-        <button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-lg">
-          Get Sellers
-        </button>
+    <div className="card">
+      <h2 className="text-2xl font-bold text-white mb-6">Query Sellers</h2>
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-8">
+        <input value={manufacturerCode} onChange={(e) => setManufacturerCode(e.target.value)} placeholder="Enter Manufacturer Code" className="input-style flex-grow" />
+        <button type="submit" className="btn-primary">Get Sellers</button>
       </form>
-
-      {searched && (
-        <div>
-          <h3 className="text-2xl font-bold mb-4">Registered Sellers</h3>
-          {sellers.length > 0 ? (
-            <div className="overflow-x-auto bg-gray-800 rounded-lg">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-gray-700">
-                  <tr>
-                    <th className="p-3">Name</th>
-                    <th className="p-3">Brand</th>
-                    <th className="p-3">Code</th>
-                    <th className="p-3">Manager</th>
-                    <th className="p-3">Address</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sellers.map((seller) => (
-                    <tr key={seller._id} className="border-b border-gray-700 hover:bg-gray-700">
-                      <td className="p-3">{seller.sellerName}</td>
-                      <td className="p-3">{seller.sellerBrand}</td>
-                      <td className="p-3">{seller.sellerCode}</td>
-                      <td className="p-3">{seller.sellerManager}</td>
-                      <td className="p-3">{seller.sellerAddress}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="text-center p-4">No sellers found for this manufacturer ID.</p>
-          )}
-        </div>
-      )}
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Brand</th><th>Code</th><th>Phone</th><th>Manager</th><th>Address</th></tr>
+          </thead>
+          <tbody>
+            {sellers.map((s) => (
+              <tr key={s._id}>
+                <td>{s.sellerId}</td><td>{s.sellerName}</td><td>{s.sellerBrand}</td>
+                <td>{s.sellerCode}</td><td>{s.sellerNum}</td><td>{s.sellerManager}</td><td>{s.sellerAddress}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {sellers.length === 0 && <p className="p-4 text-center text-slate-400">No sellers to display. Enter a code and search.</p>}
+      </div>
     </div>
   );
 };
+
 export default QuerySellerPage;
