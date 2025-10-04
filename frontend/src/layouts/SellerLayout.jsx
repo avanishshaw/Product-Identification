@@ -6,7 +6,11 @@ const SellerLayout = () => {
         { to: 'sell-product', label: 'Sell to Consumer' },
         { to: 'query-products', label: 'Products for Sale' },
     ];
-    return <RoleLayout title="Seller Portal" navLinks={links} />;
+    return <RoleLayout 
+        title="Seller Portal" 
+        description="Manage your inventory and process sales to consumers."
+        navLinks={links} 
+    />;
 };
 
 export default SellerLayout;
