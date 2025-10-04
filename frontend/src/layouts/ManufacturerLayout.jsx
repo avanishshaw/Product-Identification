@@ -8,7 +8,11 @@ const ManufacturerLayout = () => {
         { to: 'sell-product', label: 'Sell to Seller' },
         { to: 'query-seller', label: 'Query Sellers' },
     ];
-    return <RoleLayout title="Manufacturer Portal" navLinks={links} />;
+    return <RoleLayout 
+        title="Manufacturer Portal" 
+        description="Manage your products, register sellers, and track your supply chain." 
+        navLinks={links} 
+    />;
 };
 
 export default ManufacturerLayout;
