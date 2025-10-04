@@ -7,7 +7,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // This sets 'Inter' as the default font for the app
         sans: ['Inter', 'sans-serif'],
       },
     },
