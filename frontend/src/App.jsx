@@ -25,7 +25,8 @@ import VerifyProductPage from './pages/Consumer/VerifyProductPage';
 import VerificationResultPage from './pages/Consumer/VerificationResultPage';
 import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
 
-const Placeholder = () => <p className="text-center text-slate-400">Select an action from the menu above.</p>;
+// Placeholder for index routes within roles
+const Placeholder = () => <p className="text-center text-slate-500 pt-8">Select an action from the menu above to get started.</p>;
 
 const router = createBrowserRouter([
   {
