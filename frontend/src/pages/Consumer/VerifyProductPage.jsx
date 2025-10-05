@@ -12,16 +12,19 @@ const VerifyProductPage = () => {
   };
 
   return (
-    <div className="card max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6 text-center">Scan QR Code</h2>
+    <div className="form-card max-w-md mx-auto">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Scan QR Code</h2>
       <div className="border-4 border-emerald-500 rounded-lg overflow-hidden shadow-lg bg-slate-900 aspect-square">
         <Scanner
           onDecode={handleScanResult}
           onError={(error) => console.log('QR code scan error:', error?.message)}
-          styles={{ container: { width: '100%', paddingTop: '100%', position: 'relative' }, video: { position: 'absolute', top: 0, left: 0 } }}
+          styles={{ 
+            container: { width: '100%', paddingTop: '100%', position: 'relative' },
+            video: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }
+          }}
         />
       </div>
-      <p className="mt-6 text-center text-slate-400">Point the camera at a product's QR code to verify its authenticity.</p>
+      <p className="mt-6 text-center text-slate-500">Point the camera at a product's QR code to verify its authenticity.</p>
     </div>
   );
 };

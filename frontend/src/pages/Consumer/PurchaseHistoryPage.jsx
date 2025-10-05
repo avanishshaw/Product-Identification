@@ -15,8 +15,8 @@ const PurchaseHistoryPage = () => {
   };
   
   return (
-    <div className="card">
-      <h2 className="text-2xl font-bold text-white mb-6">Consumer Purchase History</h2>
+    <div className="form-card">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">Consumer Purchase History</h2>
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-8">
         <input value={consumerCode} onChange={(e) => setConsumerCode(e.target.value)} placeholder="Enter Your Consumer Code" className="input-style flex-grow" />
         <button type="submit" className="btn-primary">Get History</button>
@@ -28,7 +28,7 @@ const PurchaseHistoryPage = () => {
             {history.map(p => (<tr key={p._id}><td>{p.productSN}</td><td>{p.sellerCode}</td><td>{p.manufacturerCode}</td></tr>))}
           </tbody>
         </table>
-        {history.length === 0 && <p className="p-4 text-center text-slate-400">No history to display. Enter a code and search.</p>}
+        {history.length === 0 && <p className="p-4 text-center text-slate-500">No history to display. Enter a code and search.</p>}
       </div>
     </div>
   );
