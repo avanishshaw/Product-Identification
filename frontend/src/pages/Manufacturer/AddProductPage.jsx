@@ -10,26 +10,32 @@ const AddProductPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.productSN) {
+        alert('Product SN is required to generate a QR code.');
+        return;
+    }
     setIsSubmitting(true);
     setQrCodeUrl('');
     console.log("Submitting to backend:", formData);
-    // Simulate API call
+    // Simulate API call and QR generation
     setTimeout(() => {
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${formData.productSN}`;
       setQrCodeUrl(qrUrl);
       alert('✅ Product added and QR Code generated! (Simulation)');
       setIsSubmitting(false);
+      e.target.reset();
+      setFormData({ manufacturerID: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
     }, 1000);
   };
   
   return (
-    <div className="card max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-white mb-6">Add New Product</h2>
+    <div className="form-card max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">Add New Product</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <input name="manufacturerID" onChange={handleChange} placeholder="Manufacturer ID" className="input-style" required/>
           <input name="productName" onChange={handleChange} placeholder="Product Name" className="input-style" required/>
-          <input name="productSN" onChange={handleChange} placeholder="Product SN (Unique ID)" className="input-style" required/>
+          <input name="productSN" onChange={handleChange} placeholder="Product SN (Unique ID for QR)" className="input-style" required/>
           <input name="productBrand" onChange={handleChange} placeholder="Product Brand" className="input-style" />
           <input name="productPrice" type="number" onChange={handleChange} placeholder="Product Price" className="input-style" required/>
         </div>
@@ -38,8 +44,8 @@ const AddProductPage = () => {
         </button>
       </form>
       {qrCodeUrl && (
-        <div className="mt-8 text-center p-4 bg-slate-900 rounded-lg">
-          <h3 className="text-xl mb-4 font-semibold text-white">Generated QR Code</h3>
+        <div className="mt-8 text-center p-4 bg-slate-50 rounded-lg border">
+          <h3 className="text-xl mb-4 font-semibold text-slate-800">Generated QR Code</h3>
           <img src={qrCodeUrl} alt="QR Code" className="mx-auto border-4 border-emerald-500 rounded-lg"/>
           <button onClick={() => saveAs(qrCodeUrl, `${formData.productSN}.png`)} className="mt-4 btn-primary">
             Download QR Code

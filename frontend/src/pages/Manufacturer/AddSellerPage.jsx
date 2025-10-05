@@ -10,10 +10,10 @@ const AddSellerPage = () => {
     };
 
     return (
-        <div className="card max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">Add New Seller</h2>
+        <div className="form-card max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Add New Seller</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <input name="SellerName" placeholder="Seller Name" required className="input-style" />
                     <input name="SellerBrand" placeholder="Seller Brand" className="input-style" />
                     <input name="SellerCode" placeholder="Seller Code (Unique)" required className="input-style" />
@@ -22,9 +22,9 @@ const AddSellerPage = () => {
                     <input name="SellerAddress" placeholder="Seller Address" required className="input-style" />
                     <input name="ManufacturerId" placeholder="Your Manufacturer ID" required className="input-style" />
                 </div>
-                <button type="submit" className="btn-primary w-full">Add Seller</button>
+                <button type="submit" className="btn-primary w-full mt-6">Add Seller</button>
             </form>
-            {message && <div className="mt-4 text-center p-3 rounded-md bg-emerald-600 text-white">{message}</div>}
+            {message && <div className="mt-4 text-center p-3 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200">{message}</div>}
         </div>
     );
 };
