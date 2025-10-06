@@ -1,22 +1,18 @@
-// backend/models/productModel.js
-
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
-    productId: { type: String, required: true, unique: true, trim: true }, // This is the Product SN
-    description: { type: String },
+    productId: { type: String, required: true, unique: true }, // From ProductSN
+    name: { type: String, required: true },
     brand: { type: String },
-    price: { type: Number },
+    price: { type: Number, required: true },
     manufacturerId: { type: String, required: true },
+    currentOwner: { type: String, default: 'Manufacturer' }, // Can be Manufacturer ID, Seller Code, or Consumer Code
     status: {
         type: String,
-        enum: ['Created', 'With Manufacturer', 'In Transit', 'With Seller', 'Sold'],
+        enum: ['With Manufacturer', 'With Seller', 'Sold'],
         default: 'With Manufacturer',
     },
-    currentOwner: { type: String, default: 'Manufacturer' }, 
-}, { timestamps: true });
+}, { timestamps: true }); // Automatically adds createdAt and updatedAt
 
 const Product = mongoose.model('Product', productSchema);
-
 export default Product;
