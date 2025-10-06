@@ -1,36 +1,34 @@
-// backend/server.js
-
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import sellerRoutes from './routes/sellerRoutes.js';
-import productRoutes from './routes/productRoutes.js';
 
-// Load Environment variables
+// --- CONFIGURATION ---
 dotenv.config();
-
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Successfully connected to MongoDB Atlas!'))
-    .catch((error) => console.error('Error connecting to MongoDB Atlas:', error));
+// --- DATABASE CONNECTION ---
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('✅ Successfully connected to MongoDB Atlas!');
+    } catch (error) {
+        console.error('❌ Error connecting to MongoDB Atlas:', error.message);
+        process.exit(1); // Exit process with failure
+    }
+};
 
-// Routes
-app.use('/api/products', productRoutes);
-app.use('/api/sellers', sellerRoutes);
+connectDB();
 
+// --- API ROUTES (We will add these in the next step) ---
 app.get('/', (req, res) => {
-    res.send('API is running...');
-})
+    res.send('AuthentiQR API is running...');
+});
 
-// Start Server
+// --- START SERVER ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+    console.log(`🚀 Server is running on port ${PORT}`);
+});
