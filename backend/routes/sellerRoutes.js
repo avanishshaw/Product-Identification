@@ -1,11 +1,9 @@
-// backend/routes/sellerRoutes.js
-
 import express from 'express';
 import { addSeller, getSellersByManufacturer } from '../controllers/sellerController.js';
 
 const router = express.Router();
 
-router.route('/add').post(addSeller);
-router.route('/manufacturer/:manufacturerId').get(getSellersByManufacturer);
+router.post('/', addSeller); // POST /api/sellers
+router.get('/manufacturer/:manufacturerId', getSellersByManufacturer); // GET /api/sellers/manufacturer/MANU-A
 
 export default router;

@@ -1,15 +1,18 @@
-// backend/routes/productRoutes.js
-
 import express from 'express';
-import { createProduct, verifyProduct, getProductsBySeller, getProductsByConsumer, transferProduct } from '../controllers/productController.js';
-
+import {
+  addProduct,
+  verifyProduct,
+  transferProduct,
+  getProductsBySeller,
+  getProductsByConsumer,
+} from '../controllers/productController.js';
 
 const router = express.Router();
 
-router.route('/').post(createProduct);
-router.route('/verify/:productId').get(verifyProduct);
-router.route('/seller/:sellerCode').get(getProductsBySeller);
-router.route('/consumer/:consumerCode').get(getProductsByConsumer);
-router.route('/transfer/:productId').put(transferProduct);
+router.post('/', addProduct); // POST to /api/products
+router.get('/verify/:productId', verifyProduct); // GET /api/products/verify/PROD123
+router.put('/transfer/:productId', transferProduct); // PUT /api/products/transfer/PROD123
+router.get('/seller/:sellerCode', getProductsBySeller); // GET /api/products/seller/SELLER01
+router.get('/consumer/:consumerCode', getProductsByConsumer); // GET /api/products/consumer/CONSUMER01
 
 export default router;
