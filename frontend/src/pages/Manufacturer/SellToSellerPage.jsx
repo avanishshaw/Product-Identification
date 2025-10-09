@@ -1,12 +1,37 @@
 import React, { useState } from 'react';
+import API from '../../api';
 
 const SellToSellerPage = () => {
     const [message, setMessage] = useState('');
-    const handleSubmit = (e) => {
+    const [isError, setIsError] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage('✅ Product transferred to seller! (Simulation)');
-        e.target.reset();
-        setTimeout(() => setMessage(''), 3000);
+        setIsSubmitting(true);
+        setMessage('');
+        setIsError(false);
+
+        const formData = new FormData(e.target);
+        const productSN = formData.get('productSN');
+        const sellerCode = formData.get('sellerCode');
+
+        try {
+            // REAL API CALL
+            await API.put(`/products/transfer/${productSN}`, {
+                newOwnerCode: sellerCode,
+                newStatus: 'With Seller'
+            });
+            setMessage('✅ Product successfully transferred to seller!');
+            e.target.reset();
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || 'Transfer failed.';
+            setMessage(`❌ ${errorMsg}`);
+            setIsError(true);
+        } finally {
+            setIsSubmitting(false);
+            setTimeout(() => setMessage(''), 5000);
+        }
     };
 
     return (
@@ -15,9 +40,11 @@ const SellToSellerPage = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
                  <input name="productSN" placeholder="Product SN" required className="input-style" />
                  <input name="sellerCode" placeholder="Seller Code" required className="input-style" />
-                <button type="submit" className="btn-primary w-full mt-2">Transfer Product</button>
+                <button type="submit" className="btn-primary w-full mt-2" disabled={isSubmitting}>
+                    {isSubmitting ? 'Transferring...' : 'Transfer Product'}
+                </button>
             </form>
-            {message && <div className="mt-4 text-center p-3 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200">{message}</div>}
+            {message && <div className={`mt-4 text-center p-3 rounded-md ${isError ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>{message}</div>}
         </div>
     );
 };

@@ -1,31 +1,47 @@
 import React, { useState } from 'react';
-import { saveAs } from 'file-saver'; // Run: npm install file-saver
+import { saveAs } from 'file-saver';
+import API from '../../api'; // Import our new API client
 
 const AddProductPage = () => {
-  const [formData, setFormData] = useState({ manufacturerID: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
+  const [formData, setFormData] = useState({ manufacturerId: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.productSN) {
-        alert('Product SN is required to generate a QR code.');
-        return;
-    }
     setIsSubmitting(true);
     setQrCodeUrl('');
-    console.log("Submitting to backend:", formData);
-    // Simulate API call and QR generation
-    setTimeout(() => {
+    setMessage('');
+    setIsError(false);
+
+    const productData = {
+        name: formData.productName,
+        productId: formData.productSN,
+        brand: formData.productBrand,
+        price: Number(formData.productPrice),
+        manufacturerId: formData.manufacturerID
+    };
+
+    try {
+      // REAL API CALL
+      await API.post('/products', productData);
+
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${formData.productSN}`;
       setQrCodeUrl(qrUrl);
-      alert('✅ Product added and QR Code generated! (Simulation)');
-      setIsSubmitting(false);
+      setMessage('✅ Product added successfully & QR Code generated!');
       e.target.reset();
-      setFormData({ manufacturerID: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
-    }, 1000);
+      setFormData({ manufacturerId: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to add product.';
+      setMessage(`❌ ${errorMsg}`);
+      setIsError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -40,9 +56,10 @@ const AddProductPage = () => {
           <input name="productPrice" type="number" onChange={handleChange} placeholder="Product Price" className="input-style" required/>
         </div>
         <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Generating...' : 'Add Product & Generate QR'}
+          {isSubmitting ? 'Submitting...' : 'Add Product & Generate QR'}
         </button>
       </form>
+      {message && <div className={`mt-4 text-center p-3 rounded-md ${isError ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>{message}</div>}
       {qrCodeUrl && (
         <div className="mt-8 text-center p-4 bg-slate-50 rounded-lg border">
           <h3 className="text-xl mb-4 font-semibold text-slate-800">Generated QR Code</h3>
