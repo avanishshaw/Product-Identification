@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import { saveAs } from 'file-saver';
-import API from '../../api'; // Import our new API client
+import API from '../../api';
 
 const AddProductPage = () => {
-  const [formData, setFormData] = useState({ manufacturerId: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
+  const [formData, setFormData] = useState({
+    manufacturerId: '',
+    productName: '',
+    productSN: '',
+    productBrand: '',
+    productPrice: ''
+  });
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,21 +26,20 @@ const AddProductPage = () => {
     setMessage('');
     setIsError(false);
 
+    // This object now correctly matches all backend fields
     const productData = {
         name: formData.productName,
-        productId: formData.productSN,
+        productSN: formData.productSN,
         brand: formData.productBrand,
         price: Number(formData.productPrice),
-        manufacturerId: formData.manufacturerID
+        manufacturerId: formData.manufacturerId,
     };
 
     try {
-      // REAL API CALL
       await API.post('/products', productData);
-
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${formData.productSN}`;
       setQrCodeUrl(qrUrl);
-      setMessage('✅ Product added successfully & QR Code generated!');
+      setMessage('✅ Product added! You can now scan the QR code to test verification.');
       e.target.reset();
       setFormData({ manufacturerId: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
     } catch (err) {
@@ -49,11 +56,12 @@ const AddProductPage = () => {
       <h2 className="text-2xl font-bold text-slate-900 mb-6">Add New Product</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <input name="manufacturerID" onChange={handleChange} placeholder="Manufacturer ID" className="input-style" required/>
-          <input name="productName" onChange={handleChange} placeholder="Product Name" className="input-style" required/>
-          <input name="productSN" onChange={handleChange} placeholder="Product SN (Unique ID for QR)" className="input-style" required/>
-          <input name="productBrand" onChange={handleChange} placeholder="Product Brand" className="input-style" />
-          <input name="productPrice" type="number" onChange={handleChange} placeholder="Product Price" className="input-style" required/>
+          {/* THE FIX: Each `name` attribute now matches the `formData` state keys perfectly. */}
+          <input name="manufacturerId" value={formData.manufacturerId} onChange={handleChange} placeholder="Manufacturer ID" className="input-style" required/>
+          <input name="productName" value={formData.productName} onChange={handleChange} placeholder="Product Name" className="input-style" required/>
+          <input name="productSN" value={formData.productSN} onChange={handleChange} placeholder="Product SN (Unique ID for QR)" className="input-style" required/>
+          <input name="productBrand" value={formData.productBrand} onChange={handleChange} placeholder="Product Brand" className="input-style" />
+          <input name="productPrice" value={formData.productPrice} type="number" onChange={handleChange} placeholder="Product Price" className="input-style" required/>
         </div>
         <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Add Product & Generate QR'}
@@ -62,7 +70,7 @@ const AddProductPage = () => {
       {message && <div className={`mt-4 text-center p-3 rounded-md ${isError ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>{message}</div>}
       {qrCodeUrl && (
         <div className="mt-8 text-center p-4 bg-slate-50 rounded-lg border">
-          <h3 className="text-xl mb-4 font-semibold text-slate-800">Generated QR Code</h3>
+          <h3 className="text-xl mb-4 font-semibold text-slate-800">Generated QR Code for: {qrCodeUrl.split('data=')[1]}</h3>
           <img src={qrCodeUrl} alt="QR Code" className="mx-auto border-4 border-emerald-500 rounded-lg"/>
           <button onClick={() => saveAs(qrCodeUrl, `${formData.productSN}.png`)} className="mt-4 btn-primary">
             Download QR Code
