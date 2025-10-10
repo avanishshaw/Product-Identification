@@ -1,35 +1,55 @@
 import React, { useState } from 'react';
-
-const dummyPurchaseHistory = [
-    { _id: '1', productSN: 'PROD003', sellerCode: 'EHUB1', manufacturerCode: 'MANU-A' },
-    { _id: '2', productSN: 'PROD004', sellerCode: 'DDREAMS', manufacturerCode: 'MANU-B' },
-];
+import API from '../../api';
 
 const PurchaseHistoryPage = () => {
   const [consumerCode, setConsumerCode] = useState('');
   const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    setHistory(dummyPurchaseHistory);
+    setIsLoading(true);
+    setError('');
+    setHistory([]);
+    try {
+        // REAL API CALL
+        const { data } = await API.get(`/products/consumer/${consumerCode}`);
+        setHistory(data);
+        if (data.length === 0) {
+            setError('No purchase history found for this consumer code.');
+        }
+    } catch (err) {
+        const errorMsg = err.response?.data?.message || 'Failed to fetch history.';
+        setError(errorMsg);
+    } finally {
+        setIsLoading(false);
+    }
   };
   
   return (
     <div className="form-card">
       <h2 className="text-2xl font-bold text-slate-900 mb-6">Consumer Purchase History</h2>
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-8">
-        <input value={consumerCode} onChange={(e) => setConsumerCode(e.target.value)} placeholder="Enter Your Consumer Code" className="input-style flex-grow" />
-        <button type="submit" className="btn-primary">Get History</button>
+        <input value={consumerCode} onChange={(e) => setConsumerCode(e.target.value)} placeholder="Enter Your Consumer Code" className="input-style flex-grow" required />
+        <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? 'Searching...' : 'Get History'}
+        </button>
       </form>
-      <div className="table-wrapper">
-        <table>
-          <thead><tr><th>Product SN</th><th>Seller Code</th><th>Manufacturer Code</th></tr></thead>
-          <tbody>
-            {history.map(p => (<tr key={p._id}><td>{p.productSN}</td><td>{p.sellerCode}</td><td>{p.manufacturerCode}</td></tr>))}
-          </tbody>
-        </table>
-        {history.length === 0 && <p className="p-4 text-center text-slate-500">No history to display. Enter a code and search.</p>}
-      </div>
+
+      {isLoading && <p className="text-center text-slate-500">Loading...</p>}
+      {error && <p className="text-center text-red-600">{error}</p>}
+
+      {history.length > 0 && (
+        <div className="table-wrapper">
+          <table>
+            <thead><tr><th>Product SN</th><th>Product Name</th><th>Brand</th><th>Manufacturer ID</th></tr></thead>
+            <tbody>
+              {history.map(p => (<tr key={p._id}><td>{p.productId}</td><td>{p.name}</td><td>{p.brand}</td><td>{p.manufacturerId}</td></tr>))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
