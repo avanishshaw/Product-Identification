@@ -1,18 +1,20 @@
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
-    productId: { type: String, required: true, unique: true }, // From ProductSN
+    // Renamed 'productId' to 'productSN' to match the frontend form field.
+    // This will be our unique identifier.
+    productSN: { type: String, required: true, unique: true }, 
     name: { type: String, required: true },
     brand: { type: String },
     price: { type: Number, required: true },
     manufacturerId: { type: String, required: true },
-    currentOwner: { type: String, default: 'Manufacturer' }, // Can be Manufacturer ID, Seller Code, or Consumer Code
+    currentOwner: { type: String, default: 'Manufacturer' },
     status: {
         type: String,
         enum: ['With Manufacturer', 'With Seller', 'Sold'],
         default: 'With Manufacturer',
     },
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt
+}, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
 export default Product;

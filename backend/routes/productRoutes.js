@@ -9,10 +9,11 @@ import {
 
 const router = express.Router();
 
-router.post('/', addProduct); // POST to /api/products
-router.get('/verify/:productId', verifyProduct); // GET /api/products/verify/PROD123
-router.put('/transfer/:productId', transferProduct); // PUT /api/products/transfer/PROD123
-router.get('/seller/:sellerCode', getProductsBySeller); // GET /api/products/seller/SELLER01
-router.get('/consumer/:consumerCode', getProductsByConsumer); // GET /api/products/consumer/CONSUMER01
+// All routes now use :productSN as the parameter
+router.post('/', addProduct);
+router.get('/verify/:productSN', verifyProduct);
+router.put('/transfer/:productSN', transferProduct);
+router.get('/seller/:sellerCode', getProductsBySeller);
+router.get('/consumer/:consumerCode', getProductsByConsumer);
 
 export default router;
