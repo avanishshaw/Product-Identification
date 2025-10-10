@@ -1,26 +1,20 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-// Layouts
+// Layouts & Main Pages
 import RootLayout from './layouts/RootLayout';
+import HomePage from './pages/HomePage';
 import ManufacturerLayout from './layouts/ManufacturerLayout';
 import SellerLayout from './layouts/SellerLayout';
 import ConsumerLayout from './layouts/ConsumerLayout';
 
-// Pages
-import HomePage from './pages/HomePage';
-
-// Manufacturer Pages
+// All your page imports...
 import AddProductPage from './pages/Manufacturer/AddProductPage';
 import AddSellerPage from './pages/Manufacturer/AddSellerPage';
 import SellToSellerPage from './pages/Manufacturer/SellToSellerPage';
 import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
-
-// Seller Pages
 import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
 import QueryProductsPage from './pages/Seller/QueryProductsPage';
-
-// Consumer Pages
 import VerifyProductPage from './pages/Consumer/VerifyProductPage';
 import VerificationResultPage from './pages/Consumer/VerificationResultPage';
 import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
@@ -60,7 +54,9 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <Placeholder /> },
             { path: 'verify', element: <VerifyProductPage /> },
-            { path: 'verify/:productId', element: <VerificationResultPage /> },
+            // THE FIX: The result page is now a child of the ConsumerLayout,
+            // so it can correctly read the :productSN parameter.
+            { path: 'verify/:productSN', element: <VerificationResultPage /> },
             { path: 'history', element: <PurchaseHistoryPage /> },
         ]
       }
