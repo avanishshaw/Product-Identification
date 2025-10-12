@@ -1,0 +1,71 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import API from '../api';
+
+const SignupPage = () => {
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'Consumer' });
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const { data } = await API.post('/users/register', formData);
+            console.log('Registration successful:', data);
+            alert(`Welcome, ${data.name}! Your account has been created.`);
+            // Redirect to the login page after successful registration
+            navigate('/login');
+        } catch (err) {
+            const errorMsg = err.response?.data?.message || 'Registration failed. Please try again.';
+            setError(errorMsg);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="flex justify-center items-center py-12 px-4">
+            <div className="form-card w-full max-w-md">
+                <h2 className="text-3xl font-bold text-center text-slate-900 mb-6">Create an Account</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                        <input type="text" name="name" id="name" onChange={handleChange} className="input-style" required />
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                        <input type="email" name="email" id="email" onChange={handleChange} className="input-style" required />
+                    </div>
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                        <input type="password" name="password" id="password" onChange={handleChange} className="input-style" required />
+                    </div>
+                    <div>
+                        <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-1">Register as a</label>
+                        <select name="role" id="role" onChange={handleChange} value={formData.role} className="input-style">
+                            <option value="Consumer">Consumer</option>
+                            <option value="Seller">Seller</option>
+                            <option value="Manufacturer">Manufacturer</option>
+                        </select>
+                    </div>
+                    {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+                    <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+                        {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+                    </button>
+                </form>
+                <p className="text-center text-sm text-slate-600 mt-6">
+                    Already have an account? <Link to="/login" className="font-medium text-emerald-600 hover:text-emerald-500">Log in</Link>
+                </p>
+            </div>
+        </div>
+    );
+};
+
+export default SignupPage;
