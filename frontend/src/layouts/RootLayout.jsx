@@ -23,7 +23,6 @@ const RootLayout = () => {
                             <NavLink to="/consumer" className={({ isActive }) => isActive ? 'text-emerald-600' : 'hover:text-emerald-600'}>Consumer</NavLink>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <a href="#" className="hidden md:block text-slate-600 hover:text-emerald-600 font-medium">Login</a>
                             <a href="#" className="btn-primary">Get Started</a>
                         </div>
                     </div>
