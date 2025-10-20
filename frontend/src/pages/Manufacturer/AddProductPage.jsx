@@ -26,8 +26,13 @@ const AddProductPage = () => {
     setMessage('');
     setIsError(false);
 
-    // This object now correctly matches all backend fields
+    // Map form fields to match the backend model fields exactly
     const productData = {
+      productSN: formData.productSN,
+      name: formData.productName,       // Changed from productName to name to match backend
+      brand: formData.productBrand,     // Changed from productBrand to brand
+      price: Number(formData.productPrice), // Convert to number and change from productPrice to price
+      manufacturerId: formData.manufacturerId,
         name: formData.productName,
         productSN: formData.productSN,
         brand: formData.productBrand,
