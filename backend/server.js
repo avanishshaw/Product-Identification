@@ -14,10 +14,13 @@ app.use(cors());
 app.use(express.json());
 
 // --- DATABASE CONNECTION ---
-// ... (keep your existing database connection logic)
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        const conn = await mongoose.connect(process.env.MONGO_URI);
+        
+        // Drop existing indexes to avoid conflicts
+        await conn.connection.collection('products').dropIndexes();
+        
         console.log('✅ Successfully connected to MongoDB Atlas!');
     } catch (error) {
         console.error('❌ Error connecting to MongoDB Atlas:', error.message);
