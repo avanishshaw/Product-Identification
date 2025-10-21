@@ -32,12 +32,7 @@ const AddProductPage = () => {
       name: formData.productName,       // Changed from productName to name to match backend
       brand: formData.productBrand,     // Changed from productBrand to brand
       price: Number(formData.productPrice), // Convert to number and change from productPrice to price
-      manufacturerId: formData.manufacturerId,
-        name: formData.productName,
-        productSN: formData.productSN,
-        brand: formData.productBrand,
-        price: Number(formData.productPrice),
-        manufacturerId: formData.manufacturerId,
+      manufacturerId: formData.manufacturerId
     };
 
     try {
