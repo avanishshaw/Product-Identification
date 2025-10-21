@@ -1,6 +1,27 @@
-// ... (all your existing imports)
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+// Layouts & Main Pages
+import RootLayout from './layouts/RootLayout';
+import HomePage from './pages/HomePage';
+import ManufacturerLayout from './layouts/ManufacturerLayout';
+import SellerLayout from './layouts/SellerLayout';
+import ConsumerLayout from './layouts/ConsumerLayout';
+
+// Manufacturer Pages
+import AddProductPage from './pages/Manufacturer/AddProductPage';
+import AddSellerPage from './pages/Manufacturer/AddSellerPage';
+import SellToSellerPage from './pages/Manufacturer/SellToSellerPage';
+import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
+import QueryProductsPage from './pages/Manufacturer/QueryProductsPage';
+
+// Seller Pages
+import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
+
+// Consumer Pages
+import VerifyProductPage from './pages/Consumer/VerifyProductPage';
+import VerificationResultPage from './pages/Consumer/VerificationResultPage';
+import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
 
 const router = createBrowserRouter([
   {
@@ -8,34 +29,45 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      
-      // ADD THESE NEW ROUTES
-      { path: 'login', element: <LoginPage /> },
-      { path: 'signup', element: <SignupPage /> },
-
       {
         path: 'manufacturer',
         element: <ManufacturerLayout />,
         children: [
-          // ... (manufacturer routes remain the same)
+          { index: true, element: <AddProductPage /> },
+          { path: 'add-product', element: <AddProductPage /> },
+          { path: 'add-seller', element: <AddSellerPage /> },
+          { path: 'sell-to-seller', element: <SellToSellerPage /> },
+          { path: 'query-sellers', element: <QuerySellerPage /> },
+          { path: 'query-products', element: <QueryProductsPage /> }
         ]
       },
       {
         path: 'seller',
         element: <SellerLayout />,
         children: [
-          // ... (seller routes remain the same)
+          { index: true, element: <SellToConsumerPage /> },
+          { path: 'sell-to-consumer', element: <SellToConsumerPage /> },
+          { path: 'query-products', element: <QueryProductsPage /> }
         ]
       },
       {
         path: 'consumer',
         element: <ConsumerLayout />,
         children: [
-          // ... (consumer routes remain the same)
+          { index: true, element: <VerifyProductPage /> },
+          { path: 'verify', element: <VerifyProductPage /> },
+          { path: 'verification-result/:id', element: <VerificationResultPage /> },
+          { path: 'purchase-history', element: <PurchaseHistoryPage /> }
         ]
       }
     ],
   },
 ]);
+
+function App() {
+  return <RouterProvider router={router} />;
+}
+
+export default App;
 
 // ... (rest of the file remains the same)
