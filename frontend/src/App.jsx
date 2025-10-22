@@ -23,10 +23,13 @@ import VerifyProductPage from './pages/Consumer/VerifyProductPage';
 import VerificationResultPage from './pages/Consumer/VerificationResultPage';
 import PurchaseHistoryPage from './pages/Consumer/PurchaseHistoryPage';
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <ErrorBoundary />,
     children: [
       { index: true, element: <HomePage /> },
       {
@@ -53,11 +56,28 @@ const router = createBrowserRouter([
       {
         path: 'consumer',
         element: <ConsumerLayout />,
+        errorElement: <ErrorBoundary />,
         children: [
-          { index: true, element: <VerifyProductPage /> },
-          { path: 'verify', element: <VerifyProductPage /> },
-          { path: 'verification-result/:id', element: <VerificationResultPage /> },
-          { path: 'purchase-history', element: <PurchaseHistoryPage /> }
+          { 
+            index: true, 
+            element: <VerifyProductPage />,
+            errorElement: <ErrorBoundary />
+          },
+          { 
+            path: 'verify', 
+            element: <VerifyProductPage />,
+            errorElement: <ErrorBoundary />
+          },
+          { 
+            path: 'verify/:productSN', 
+            element: <VerificationResultPage />,
+            errorElement: <ErrorBoundary />
+          },
+          { 
+            path: 'purchase-history', 
+            element: <PurchaseHistoryPage />,
+            errorElement: <ErrorBoundary />
+          }
         ]
       }
     ],

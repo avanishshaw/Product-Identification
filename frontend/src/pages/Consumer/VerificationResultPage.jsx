@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import API from '../../api';
 
 const VerificationResultPage = () => {
-    // THE FIX: The key here must exactly match the parameter in the route.
-    // Our route is '/consumer/verify/:productSN', so we use { productSN }.
     const { productSN } = useParams();
+    const navigate = useNavigate();
     
     const [product, setProduct] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -14,7 +13,7 @@ const VerificationResultPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             if (!productSN) {
-                setError("No Product SN was provided in the URL.");
+                setError("No Product SN was provided.");
                 setIsLoading(false);
                 return;
             }
@@ -22,20 +21,25 @@ const VerificationResultPage = () => {
             setIsLoading(true);
             setError('');
             try {
-                // REAL API CALL using the correct parameter from the URL
                 const { data } = await API.get(`/products/verify/${productSN}`);
                 setProduct(data);
+                setIsLoading(false);
             } catch (err) {
-                const errorMsg = err.response?.data?.message || 'Verification failed.';
+                console.error('Verification Error:', err);
+                const errorMsg = err.response?.data?.message || 'Failed to verify product.';
                 setError(errorMsg);
                 setProduct(null);
-            } finally {
                 setIsLoading(false);
+                
+                // If it's a 404, show a user-friendly message
+                if (err.response?.status === 404) {
+                    setError(`Product with ID ${productSN} was not found. Please check the product ID and try again.`);
+                }
             }
         };
 
         fetchProduct();
-    }, [productSN]); // This effect re-runs whenever the productSN from the URL changes
+    }, [productSN]);
 
     const renderStatusBadge = (status) => {
         // ... (this helper function remains the same)
