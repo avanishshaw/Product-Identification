@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
         type: String, 
         required: true, 
         unique: true,
-        index: true // Ensure this is properly indexed
+        index: true
     },
     name: { 
         type: String, 
@@ -13,12 +13,12 @@ const productSchema = new mongoose.Schema({
     },
     brand: { 
         type: String,
-        default: '' // Optional field with default empty string
+        default: ''
     },
     price: { 
         type: Number, 
         required: true,
-        min: 0 // Ensure price is non-negative
+        min: 0
     },
     manufacturerId: { 
         type: String, 
@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema({
     currentOwner: { 
         type: String, 
         default: 'Manufacturer' 
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     },
     status: {
         type: String,
