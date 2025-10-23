@@ -14,9 +14,12 @@ app.use(cors());
 app.use(express.json());
 
 // --- DATABASE CONNECTION ---
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Avanish:Avanish123@cluster0.bodkcyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
+        console.log('Connecting to MongoDB with URI:', MONGO_URI);
+        const conn = await mongoose.connect(MONGO_URI);
         
         // Drop existing indexes to avoid conflicts
         await conn.connection.collection('products').dropIndexes();
