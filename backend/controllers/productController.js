@@ -43,9 +43,22 @@ export const verifyProduct = async (req, res) => {
             return res.status(400).json({ message: 'Product SN is required.' });
         }
 
-        console.log('Verifying product with SN:', productSN); // Debug log
+        console.log('\n--- Product Verification Debug ---');
+        console.log('Verifying product with SN:', productSN);
+        console.log('MongoDB URI:', process.env.MONGO_URI);
         
+        // Additional debug logging
+        const allProducts = await Product.find({});
+        console.log('\nAll products in DB:', JSON.stringify(allProducts.map(p => ({
+            productSN: p.productSN,
+            name: p.name,
+            status: p.status
+        })), null, 2));
+        
+        console.log('\nLooking for product with:', { productSN });
         const product = await Product.findOne({ productSN });
+        console.log('Found product:', product ? JSON.stringify(product, null, 2) : 'null');
+        console.log('--- End Debug ---\n');
         
         if (product) {
             res.status(200).json(product);
