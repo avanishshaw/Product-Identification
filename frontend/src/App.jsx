@@ -12,8 +12,8 @@ import ConsumerLayout from './layouts/ConsumerLayout';
 import AddProductPage from './pages/Manufacturer/AddProductPage';
 import AddSellerPage from './pages/Manufacturer/AddSellerPage';
 import SellToSellerPage from './pages/Manufacturer/SellToSellerPage';
-import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
-import QueryProductsPage from './pages/Manufacturer/QueryProductsPage';
+// import QuerySellerPage from './pages/Manufacturer/QuerySellerPage';
+// import QueryProductsPage from './pages/Manufacturer/QueryProductsPage';
 
 // Seller Pages
 import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
@@ -40,8 +40,8 @@ const router = createBrowserRouter([
           { path: 'add-product', element: <AddProductPage /> },
           { path: 'add-seller', element: <AddSellerPage /> },
           { path: 'sell-to-seller', element: <SellToSellerPage /> },
-          { path: 'query-sellers', element: <QuerySellerPage /> },
-          { path: 'query-products', element: <QueryProductsPage /> }
+          // { path: 'query-sellers', element: <QuerySellerPage /> },
+          // { path: 'query-products', element: <QueryProductsPage /> }
         ]
       },
       {
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SellToConsumerPage /> },
           { path: 'sell-to-consumer', element: <SellToConsumerPage /> },
-          { path: 'query-products', element: <QueryProductsPage /> }
+          // { path: 'query-products', element: <QueryProductsPage /> }
         ]
       },
       {
