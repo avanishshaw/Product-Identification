@@ -18,7 +18,6 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Avanish:Avanish123@clu
 
 const connectDB = async () => {
     try {
-        console.log('Connecting to MongoDB with URI:', MONGO_URI);
         const conn = await mongoose.connect(MONGO_URI);
         
         // Drop existing indexes to avoid conflicts
