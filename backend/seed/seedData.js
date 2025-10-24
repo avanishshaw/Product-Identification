@@ -11,8 +11,10 @@ const __dirname = dirname(__filename);
 // Load environment variables from the correct path
 dotenv.config();
 
-// Hard-code the MongoDB URI if not found in .env
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Avanish:Avanish123@cluster0.bodkcyn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+if (!process.env.MONGO_URI) {
+    console.error('Error: MONGO_URI is not defined in the environment variables');
+    process.exit(1);
+}
 
 const seedProducts = [
     {
@@ -104,7 +106,7 @@ const seedSellers = [
 async function seedDatabase() {
     try {
         // Connect to MongoDB
-        await mongoose.connect(MONGO_URI);
+        await mongoose.connect(process.env.MONGO_URI);
         console.log('Connected to MongoDB...');
 
         // Clear existing data
