@@ -5,7 +5,7 @@ const ManufacturerLayout = () => {
     const links = [
         { to: 'add-product', label: 'Add Product' },
         { to: 'add-seller', label: 'Add Seller' },
-        { to: 'sell-product', label: 'Sell to Seller' },
+        { to: 'sell-to-seller', label: 'Sell to Seller' },
     ];
     return <RoleLayout 
         title="Manufacturer Portal" 
