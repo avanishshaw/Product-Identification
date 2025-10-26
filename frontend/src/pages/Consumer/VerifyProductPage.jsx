@@ -11,6 +11,7 @@ const VerifyProductPage = () => {
 
   // Handler for the live camera scanner result
   const handleScanResult = (result) => {
+    console.log('QR code scanned:', result);
     if (result) {
       navigate(`/consumer/verify/${result}`);
     }
@@ -60,12 +61,28 @@ const VerifyProductPage = () => {
       {/* Live Camera Scanner */}
       <div className="border-4 border-emerald-500 rounded-lg overflow-hidden shadow-lg bg-slate-900 aspect-square">
         <Scanner
-          onDecode={handleScanResult}
-          onError={(error) => console.log('QR code scan error:', error?.message)}
-          styles={{ 
-            container: { width: '100%', paddingTop: '100%', position: 'relative' },
-            video: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }
+          // defensive wrapper: log raw result and normalize to a string before passing to handler
+          onDecode={(result) => {
+            console.log('Scanner onDecode raw:', result);
+            try {
+              const value = result?.text ?? result;
+              if (typeof value === 'string') {
+                // pass normalized string
+                handleScanResult(value);
+              } else if (value && typeof value === 'object') {
+                const maybe = value?.data ?? value?.code ?? value?.rawData ?? JSON.stringify(value);
+                handleScanResult(maybe);
+              }
+            } catch (err) {
+              console.error('Error processing decode result', err);
+            }
           }}
+          onError={(error) => console.error('QR code scan error:', error)}
+          // use prop names compatible with v2.x and ensure the video is centered
+          containerStyle={{ width: '100%', paddingTop: '100%', position: 'relative' }}
+          videoStyle={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center', backgroundColor: 'black' }}
+          // prefer environment (rear) camera when available
+          videoConstraints={{ facingMode: 'environment' }}
         />
       </div>
       <p className="mt-6 text-center text-slate-500">Point your camera at a QR code</p>
