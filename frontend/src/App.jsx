@@ -17,6 +17,7 @@ import SellToSellerPage from './pages/Manufacturer/SellToSellerPage';
 
 // Seller Pages
 import SellToConsumerPage from './pages/Seller/SellToConsumerPage';
+import QueryProductsPage from './pages/Seller/QueryProductsPage';
 
 // Consumer Pages
 import VerifyProductPage from './pages/Consumer/VerifyProductPage';
@@ -50,31 +51,30 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SellToConsumerPage /> },
           { path: 'sell-to-consumer', element: <SellToConsumerPage /> },
-          // { path: 'query-products', element: <QueryProductsPage /> }
-        ]
+          { path: 'query-products', element: <QueryProductsPage /> },]
       },
       {
         path: 'consumer',
         element: <ConsumerLayout />,
         errorElement: <ErrorBoundary />,
         children: [
-          { 
-            index: true, 
+          {
+            index: true,
             element: <VerifyProductPage />,
             errorElement: <ErrorBoundary />
           },
-          { 
-            path: 'verify', 
+          {
+            path: 'verify',
             element: <VerifyProductPage />,
             errorElement: <ErrorBoundary />
           },
-          { 
-            path: 'verify/:productSN', 
+          {
+            path: 'verify/:productSN',
             element: <VerificationResultPage />,
             errorElement: <ErrorBoundary />
           },
-          { 
-            path: 'purchase-history', 
+          {
+            path: 'purchase-history',
             element: <PurchaseHistoryPage />,
             errorElement: <ErrorBoundary />
           }

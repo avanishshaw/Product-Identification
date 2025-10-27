@@ -45,7 +45,15 @@ const QueryProductsPage = () => {
           <table>
             <thead><tr><th>Product SN</th><th>Name</th><th>Brand</th><th>Price</th><th>Status</th></tr></thead>
             <tbody>
-              {products.map(p => (<tr key={p._id}><td>{p.productId}</td><td>{p.name}</td><td>{p.brand}</td><td>${p.price}</td><td><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">{p.status}</span></td></tr>))}
+              {products.map(p => (
+                <tr key={p._id}>
+                  <td>{p.productSN}</td>
+                  <td>{p.name}</td>
+                  <td>{p.brand}</td>
+                  <td>${p.price}</td>
+                  <td><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">{p.status}</span></td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
