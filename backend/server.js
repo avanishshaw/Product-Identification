@@ -10,7 +10,18 @@ import sellerRoutes from './routes/sellerRoutes.js';
 // --- CONFIGURATION ---
 dotenv.config();
 const app = express();
-app.use(cors());
+
+// CORS Configuration - Allow specific origins in production
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? (process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:5173'])
+    : true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // --- DATABASE CONNECTION ---
@@ -40,9 +51,23 @@ app.get('/', (req, res) => {
     res.send('AuthentiQR API is running...');
 });
 
+// --- ERROR HANDLING MIDDLEWARE ---
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(err.status || 500).json({
+        message: err.message || 'Internal server error',
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
+});
+
+// --- 404 HANDLER ---
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
+
 // --- START SERVER ---
-// ... (keep your existing server start logic)
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
