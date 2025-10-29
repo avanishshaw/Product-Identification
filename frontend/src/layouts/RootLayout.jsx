@@ -11,7 +11,7 @@ const LogoIcon = () => (
 const RootLayout = () => {
     return (
         <div className="min-h-screen bg-slate-100 text-slate-800 font-sans">
-            <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+            <header className="bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
                 <nav className="container mx-auto px-4 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo and Brand */}
@@ -27,7 +27,7 @@ const RootLayout = () => {
                                 className={({ isActive }) => 
                                     isActive 
                                         ? 'flex items-center space-x-2 text-emerald-600 font-medium' 
-                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium'
+                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors'
                                 }
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,7 +40,7 @@ const RootLayout = () => {
                                 className={({ isActive }) => 
                                     isActive 
                                         ? 'flex items-center space-x-2 text-emerald-600 font-medium' 
-                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium'
+                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors'
                                 }
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,7 +53,7 @@ const RootLayout = () => {
                                 className={({ isActive }) => 
                                     isActive 
                                         ? 'flex items-center space-x-2 text-emerald-600 font-medium' 
-                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium'
+                                        : 'flex items-center space-x-2 text-slate-600 hover:text-emerald-600 font-medium transition-colors'
                                 }
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,10 +66,10 @@ const RootLayout = () => {
                         {/* Action Button */}
                         <div className="flex items-center">
                             <Link to="/consumer/verify" className="btn-primary">
-                                <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                                 </svg>
-                                Scan Product
+                                <span>Scan Product</span>
                             </Link>
                         </div>
                     </div>
