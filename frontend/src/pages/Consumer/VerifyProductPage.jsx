@@ -1,27 +1,117 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scanner } from '@yudiel/react-qr-scanner';
 import jsQR from 'jsqr';
+import beepSound from '../../assets/beep.wav';
 
 const VerifyProductPage = () => {
   const navigate = useNavigate();
   const [manualProductId, setManualProductId] = useState('');
   const [uploadError, setUploadError] = useState('');
+  const [cameraError, setCameraError] = useState('');
   const fileInputRef = useRef(null);
 
-  // Handler for the live camera scanner result
-  const handleScanResult = (result) => {
-    console.log('QR code scanned:', result);
-    if (result) {
-      navigate(`/consumer/verify/${result}`);
-    }
+  // Camera refs
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const rafRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // One-shot guard and beep
+  const hasNavigatedRef = useRef(false);
+  const beepAudio = useMemo(() => new Audio(beepSound), []);
+
+  const navigateOnce = (value) => {
+    if (hasNavigatedRef.current) return;
+    const normalized = String(value || '').trim();
+    if (!normalized) return;
+    try { beepAudio.currentTime = 0; beepAudio.play().catch(() => {}); } catch {}
+    hasNavigatedRef.current = true;
+    navigate(`/consumer/verify/${encodeURIComponent(normalized)}`);
+    setTimeout(() => { hasNavigatedRef.current = false; }, 1500);
   };
+
+  // Start camera and scan frames with jsQR
+  useEffect(() => {
+    let isMounted = true;
+
+    const startCamera = async () => {
+      setCameraError('');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false,
+        });
+        if (!isMounted) {
+          // If unmounted before stream resolves, stop tracks
+          stream.getTracks().forEach(t => t.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          const onCanPlay = () => {
+            videoRef.current.play().catch(() => {});
+            scanLoop();
+          };
+          if (videoRef.current.readyState >= 2) {
+            onCanPlay();
+          } else {
+            videoRef.current.onloadedmetadata = onCanPlay;
+          }
+        }
+      } catch (err) {
+        console.error('Camera access error:', err);
+        setCameraError('Unable to access the camera. Please allow camera permissions and ensure no other app is using it.');
+      }
+    };
+
+    const scanLoop = () => {
+      if (!videoRef.current || !canvasRef.current || hasNavigatedRef.current) return;
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+
+      const width = video.videoWidth || 640;
+      const height = video.videoHeight || 480;
+
+      // Keep canvas in sync but cap size for performance
+      const targetW = Math.min(640, width || 640);
+      const targetH = Math.min(480, height || 480);
+      canvas.width = targetW;
+      canvas.height = targetH;
+
+      try {
+        ctx.drawImage(video, 0, 0, targetW, targetH);
+        const imageData = ctx.getImageData(0, 0, targetW, targetH);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code && code.data) {
+          navigateOnce(code.data);
+          return; // stop this tick; guard prevents more
+        }
+      } catch (e) {
+        // Ignore frame errors; continue scanning
+      }
+
+      rafRef.current = requestAnimationFrame(scanLoop);
+    };
+
+    startCamera();
+
+    return () => {
+      isMounted = false;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [navigateOnce]);
 
   // Handler for the manual text form submission
   const handleManualSubmit = (e) => {
     e.preventDefault();
     if (manualProductId.trim()) {
-      navigate(`/consumer/verify/${manualProductId.trim()}`);
+      navigateOnce(manualProductId.trim());
     }
   };
 
@@ -44,7 +134,7 @@ const VerifyProductPage = () => {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
 
         if (code && code.data) {
-          navigate(`/consumer/verify/${code.data}`);
+          navigateOnce(code.data);
         } else {
           setUploadError('Could not read QR code from the uploaded image. Please try another file.');
         }
@@ -59,32 +149,13 @@ const VerifyProductPage = () => {
       <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Verify Product Authenticity</h2>
       
       {/* Live Camera Scanner */}
-      <div className="border-4 border-emerald-500 rounded-lg overflow-hidden shadow-lg bg-slate-900 aspect-square">
-        <Scanner
-          // defensive wrapper: log raw result and normalize to a string before passing to handler
-          onDecode={(result) => {
-            console.log('Scanner onDecode raw:', result);
-            try {
-              const value = result?.text ?? result;
-              if (typeof value === 'string') {
-                // pass normalized string
-                handleScanResult(value);
-              } else if (value && typeof value === 'object') {
-                const maybe = value?.data ?? value?.code ?? value?.rawData ?? JSON.stringify(value);
-                handleScanResult(maybe);
-              }
-            } catch (err) {
-              console.error('Error processing decode result', err);
-            }
-          }}
-          onError={(error) => console.error('QR code scan error:', error)}
-          // use prop names compatible with v2.x and ensure the video is centered
-          containerStyle={{ width: '100%', paddingTop: '100%', position: 'relative' }}
-          videoStyle={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center', backgroundColor: 'black' }}
-          // prefer environment (rear) camera when available
-          videoConstraints={{ facingMode: 'environment' }}
-        />
+      <div className="border-4 border-emerald-500 rounded-lg overflow-hidden shadow-lg bg-slate-900 aspect-square relative">
+        <video ref={videoRef} playsInline muted className="absolute inset-0 w-full h-full object-cover" />
+        <canvas ref={canvasRef} className="hidden" />
       </div>
+      {cameraError && (
+        <p className="mt-2 text-center text-red-600 text-sm">{cameraError}</p>
+      )}
       <p className="mt-6 text-center text-slate-500">Point your camera at a QR code</p>
 
       <div className="relative flex py-5 items-center">
