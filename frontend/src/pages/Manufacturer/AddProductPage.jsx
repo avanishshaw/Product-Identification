@@ -36,14 +36,33 @@ const AddProductPage = () => {
     };
 
     try {
-      await API.post('/products', productData);
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${formData.productSN}`;
+      console.log('Submitting product data:', productData);
+      const response = await API.post('/products', productData);
+      console.log('Product added successfully:', response.data);
+      
+      // URL encode the productSN for the QR code
+      const encodedSN = encodeURIComponent(formData.productSN);
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedSN}`;
       setQrCodeUrl(qrUrl);
       setMessage('✅ Product added! You can now scan the QR code to test verification.');
       e.target.reset();
       setFormData({ manufacturerId: '', productName: '', productSN: '', productBrand: '', productPrice: '' });
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to add product.';
+      console.error('Add Product Error:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      
+      let errorMsg = 'Failed to add product.';
+      if (err.response?.data?.message) {
+        errorMsg = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMsg = err.response.data.error;
+      } else if (err.message) {
+        errorMsg = err.message;
+      } else if (!err.response) {
+        errorMsg = 'Unable to connect to server. Please check your connection and ensure the API is running.';
+      }
+      
       setMessage(`❌ ${errorMsg}`);
       setIsError(true);
     } finally {

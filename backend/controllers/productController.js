@@ -37,27 +37,41 @@ export const addProduct = async (req, res) => {
 // @route   GET /api/products/verify/:productSN
 export const verifyProduct = async (req, res) => {
     try {
-        const { productSN } = req.params;
+        let { productSN } = req.params;
+        
+        // URL decode the productSN in case it was encoded
+        productSN = decodeURIComponent(productSN);
         
         if (!productSN) {
             return res.status(400).json({ message: 'Product SN is required.' });
         }
 
         console.log('\n--- Product Verification Debug ---');
-        console.log('Verifying product with SN:', productSN);
-        console.log('MongoDB URI:', process.env.MONGO_URI);
+        console.log('Raw productSN from params:', req.params.productSN);
+        console.log('Decoded productSN:', productSN);
         
-        // Additional debug logging
-        const allProducts = await Product.find({});
-        console.log('\nAll products in DB:', JSON.stringify(allProducts.map(p => ({
+        // Try to find the product (case-insensitive search might help)
+        let product = await Product.findOne({ productSN: productSN.trim() });
+        
+        // If not found, try case-insensitive search
+        if (!product) {
+            product = await Product.findOne({ 
+                productSN: { $regex: new RegExp(`^${productSN.trim()}$`, 'i') } 
+            });
+        }
+        
+        console.log('Found product:', product ? JSON.stringify({
+            productSN: product.productSN,
+            name: product.name,
+            status: product.status
+        }, null, 2) : 'null');
+        
+        // Log all products for debugging
+        const allProducts = await Product.find({}).limit(10);
+        console.log('Sample products in DB:', allProducts.map(p => ({
             productSN: p.productSN,
-            name: p.name,
-            status: p.status
-        })), null, 2));
-        
-        console.log('\nLooking for product with:', { productSN });
-        const product = await Product.findOne({ productSN });
-        console.log('Found product:', product ? JSON.stringify(product, null, 2) : 'null');
+            name: p.name
+        })));
         console.log('--- End Debug ---\n');
         
         if (product) {
@@ -65,11 +79,13 @@ export const verifyProduct = async (req, res) => {
         } else {
             res.status(404).json({ 
                 message: `Product with SN ${productSN} not found in the database.`,
-                productSN 
+                productSN,
+                searchedValue: productSN.trim()
             });
         }
     } catch (error) {
         console.error('VERIFY PRODUCT ERROR:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({ 
             message: 'Failed to verify product.',
             error: error.message,

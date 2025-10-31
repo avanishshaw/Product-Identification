@@ -21,12 +21,19 @@ const VerificationResultPage = () => {
             setIsLoading(true);
             setError('');
             try {
-                const { data } = await API.get(`/products/verify/${productSN}`);
+                // URL encode the productSN to handle special characters
+                const encodedSN = encodeURIComponent(productSN);
+                console.log('Fetching product with SN:', productSN, 'Encoded:', encodedSN);
+                const { data } = await API.get(`/products/verify/${encodedSN}`);
+                console.log('Product data received:', data);
                 setProduct(data);
                 setIsLoading(false);
             } catch (err) {
                 console.error('Verification Error:', err);
-                const errorMsg = err.response?.data?.message || 'Failed to verify product.';
+                console.error('Error response:', err.response?.data);
+                console.error('Error status:', err.response?.status);
+                
+                const errorMsg = err.response?.data?.message || err.message || 'Failed to verify product.';
                 setError(errorMsg);
                 setProduct(null);
                 setIsLoading(false);
@@ -34,6 +41,9 @@ const VerificationResultPage = () => {
                 // If it's a 404, show a user-friendly message
                 if (err.response?.status === 404) {
                     setError(`Product with ID ${productSN} was not found. Please check the product ID and try again.`);
+                } else if (!err.response) {
+                    // Network error or CORS issue
+                    setError('Unable to connect to server. Please check your connection and ensure the API is running.');
                 }
             }
         };
