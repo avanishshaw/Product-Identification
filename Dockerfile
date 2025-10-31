@@ -1,4 +1,4 @@
-c# Use Node.js 20 image
+# Use Node.js 20 image
 FROM node:20-alpine
 
 # Set working directory
