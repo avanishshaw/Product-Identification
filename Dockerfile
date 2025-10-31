@@ -1,48 +1,23 @@
-# Multi-stage build for production deployment
-
-# Stage 1: Build Frontend
-FROM node:20-alpine AS frontend-builder
-
-WORKDIR /app/frontend
-
-COPY frontend/package*.json ./
-RUN npm ci
-
-COPY frontend/ ./
-RUN npm run build
-
-# Stage 2: Build Backend
-FROM node:20-alpine AS backend-builder
-
-WORKDIR /app/backend
-
-COPY backend/package*.json ./
-RUN npm ci --only=production
-
-# Stage 3: Production Image
+c# Use Node.js 20 image
 FROM node:20-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Copy backend files
-COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules
-COPY backend/ ./backend/
+# Copy backend package files
+COPY backend/package*.json ./
 
-# Copy frontend build
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+# Install dependencies (npm ci is faster and more reliable for production)
+RUN npm ci --only=production
 
-# Install serve to serve frontend in production
-RUN npm install -g serve
+# Copy backend source code
+COPY backend/ ./
 
-WORKDIR /app/backend
-
-# Expose backend port
+# Expose port (Render will set PORT dynamically via environment variable)
 EXPOSE 5001
 
-# Environment variables
+# Set NODE_ENV to production
 ENV NODE_ENV=production
-ENV PORT=5001
 
-# Start script that runs both backend and serves frontend
-CMD ["sh", "-c", "node server.js & serve -s ../frontend/dist -l 3000 & wait"]
-
+# Start backend (Render will override PORT via env var)
+CMD ["npm", "start"]
